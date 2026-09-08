@@ -1,7 +1,11 @@
+
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/database");
+const authRoutes = require("./routes/authRoutes");
+const invoiceRoutes = require("./routes/invoiceRoutes");
+
 
 dotenv.config();
 
@@ -13,6 +17,10 @@ connectDB();
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Authentication Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/invoices", invoiceRoutes);
 
 // Test Route
 app.get("/", (req, res) => {

@@ -1,34 +1,53 @@
 
 const express = require("express");
 
-const { createInvoice, getInvoices,
-    getInvoiceById,
-    updateInvoice,
-    deleteInvoice,
-    updateInvoiceStatus,
-
- } = require("../controllers/invoiceController");
+const {
+  createInvoice,
+  getInvoices,
+  getInvoiceById,
+  updateInvoice,
+  deleteInvoice,
+  updateInvoiceStatus,
+  recordPayment,
+} = require("../controllers/invoiceController");
 
 const protect = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-// Create invoice
+// =====================================
+// CREATE INVOICE
+// =====================================
 router.post("/", protect, createInvoice);
 
-// Get all invoices
+// =====================================
+// GET ALL INVOICES
+// =====================================
 router.get("/", protect, getInvoices);
 
-// Get single invoice
+// =====================================
+// GET SINGLE INVOICE
+// =====================================
 router.get("/:id", protect, getInvoiceById);
 
-// Update invoice
-router.put("/:id", protect, updateInvoice); 
+// =====================================
+// UPDATE INVOICE
+// =====================================
+router.put("/:id", protect, updateInvoice);
 
-// Delete invoice
+// =====================================
+// DELETE INVOICE
+// =====================================
 router.delete("/:id", protect, deleteInvoice);
 
-// Update invoice status
+// =====================================
+// UPDATE INVOICE STATUS
+// =====================================
 router.patch("/:id/status", protect, updateInvoiceStatus);
+
+// =====================================
+// RECORD PAYMENT
+// =====================================
+router.post("/:id/payments", protect, recordPayment);
 
 module.exports = router;

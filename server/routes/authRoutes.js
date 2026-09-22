@@ -4,32 +4,69 @@ const express = require("express");
 const {
   registerUser,
   loginUser,
+  forgotPassword,
+  resetPassword,
   getUserProfile,
   updateUserProfile,
 } = require("../controllers/authController");
 
 const protect = require("../middleware/authMiddleware");
 
+const {
+  loginRateLimiter,
+  signupRateLimiter,
+  forgotPasswordRateLimiter,
+  resetPasswordRateLimiter,
+} = require("../middleware/rateLimiter");
+
 const router = express.Router();
 
-// Register User
-router.post("/register", registerUser);
+router.post(
+  "/register",
+  signupRateLimiter,
+  registerUser
+);
 
-// Login User
-router.post("/login", loginUser);
+router.post(
+  "/login",
+  loginRateLimiter,
+  loginUser
+);
 
-// Get logged-in user profile
-router.get("/profile", protect, getUserProfile);
+router.post(
+  "/forgot-password",
+  forgotPasswordRateLimiter,
+  forgotPassword
+);
 
-// Update logged-in user profile
-router.put("/profile", protect, updateUserProfile);
+router.post(
+  "/reset-password/:token",
+  resetPasswordRateLimiter,
+  resetPassword
+);
 
-// Temporary protected route for testing JWT
-router.get("/protected", protect, (req, res) => {
-  res.status(200).json({
-    message: "You successfully accessed a protected route!",
-    user: req.user,
-  });
-});
+router.get(
+  "/profile",
+  protect,
+  getUserProfile
+);
+
+router.put(
+  "/profile",
+  protect,
+  updateUserProfile
+);
+
+router.get(
+  "/protected",
+  protect,
+  (req, res) => {
+    res.status(200).json({
+      message:
+        "You successfully accessed a protected route!",
+      user: req.user,
+    });
+  }
+);
 
 module.exports = router;

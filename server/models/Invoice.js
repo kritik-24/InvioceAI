@@ -36,18 +36,82 @@ const invoiceItemSchema = new mongoose.Schema(
 );
 
 // ===============================
+// PAYMENT HISTORY SCHEMA
+// ===============================
+const paymentSchema = new mongoose.Schema(
+  {
+    amount: {
+      type: Number,
+      required: [true, "Payment amount is required"],
+      min: [0.01, "Payment amount must be greater than zero"],
+    },
+
+    paymentDate: {
+      type: Date,
+      required: true,
+      default: Date.now,
+    },
+
+    paymentMethod: {
+      type: String,
+      enum: [
+        "",
+        "Cash",
+        "Bank Transfer",
+        "UPI",
+        "Credit Card",
+        "Debit Card",
+        "Cheque",
+        "Other",
+      ],
+      default: "",
+    },
+
+    paymentReference: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    paymentNotes: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+// ===============================
 // INVOICE SCHEMA
 // ===============================
 const invoiceSchema = new mongoose.Schema(
   {
-    // Invoice owner
+    // ===============================
+    // INVOICE OWNER
+    // ===============================
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      index: true,
     },
 
-    // Client information
+    // ===============================
+    // CLIENT RELATIONSHIP
+    // ===============================
+    client: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Client",
+      default: null,
+      index: true,
+    },
+
+    // ===============================
+    // CLIENT SNAPSHOT
+    // ===============================
     clientName: {
       type: String,
       required: [true, "Client name is required"],
@@ -67,7 +131,9 @@ const invoiceSchema = new mongoose.Schema(
       default: "",
     },
 
-    // Invoice information
+    // ===============================
+    // INVOICE INFORMATION
+    // ===============================
     invoiceNumber: {
       type: String,
       required: [true, "Invoice number is required"],
@@ -85,44 +151,108 @@ const invoiceSchema = new mongoose.Schema(
       required: [true, "Due date is required"],
     },
 
-    // Invoice items
+    // ===============================
+    // INVOICE ITEMS
+    // ===============================
     items: {
       type: [invoiceItemSchema],
       required: true,
       validate: {
         validator: function (items) {
-          return items.length > 0;
+          return Array.isArray(items) && items.length > 0;
         },
         message: "At least one invoice item is required",
       },
     },
 
-    // Financial information
+    // ===============================
+    // FINANCIAL INFORMATION
+    // ===============================
     subtotal: {
       type: Number,
       required: true,
-      min: 0,
+      min: [0, "Subtotal cannot be negative"],
     },
 
     tax: {
       type: Number,
       default: 0,
-      min: 0,
+      min: [0, "Tax cannot be negative"],
     },
 
     total: {
       type: Number,
       required: true,
-      min: 0,
+      min: [0, "Total cannot be negative"],
     },
 
-    // Payment status
+    // ===============================
+    // PAYMENT STATUS
+    // ===============================
     status: {
       type: String,
-      enum: ["Draft", "Sent", "Paid", "Overdue"],
+      enum: [
+        "Draft",
+        "Sent",
+        "Partially Paid",
+        "Paid",
+        "Overdue",
+      ],
       default: "Draft",
     },
 
+    // ===============================
+    // PAYMENT SUMMARY
+    // ===============================
+    paidAmount: {
+      type: Number,
+      default: 0,
+      min: [0, "Paid amount cannot be negative"],
+    },
+
+    paymentDate: {
+      type: Date,
+      default: null,
+    },
+
+    paymentMethod: {
+      type: String,
+      enum: [
+        "",
+        "Cash",
+        "Bank Transfer",
+        "UPI",
+        "Credit Card",
+        "Debit Card",
+        "Cheque",
+        "Other",
+      ],
+      default: "",
+    },
+
+    paymentReference: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    paymentNotes: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    // ===============================
+    // PAYMENT HISTORY
+    // ===============================
+    payments: {
+      type: [paymentSchema],
+      default: [],
+    },
+
+    // ===============================
+    // ADDITIONAL NOTES
+    // ===============================
     notes: {
       type: String,
       trim: true,
@@ -138,8 +268,13 @@ const invoiceSchema = new mongoose.Schema(
 // UNIQUE INVOICE NUMBER PER USER
 // ===============================
 invoiceSchema.index(
-  { user: 1, invoiceNumber: 1 },
-  { unique: true }
+  {
+    user: 1,
+    invoiceNumber: 1,
+  },
+  {
+    unique: true,
+  }
 );
 
 const Invoice = mongoose.model("Invoice", invoiceSchema);

@@ -2,15 +2,13 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL:
+    import.meta.env.VITE_API_URL ||
+    "http://localhost:5000/api",
   headers: {
     "Content-Type": "application/json",
   },
 });
-
-// =====================================
-// REQUEST INTERCEPTOR
-// =====================================
 
 api.interceptors.request.use(
   (config) => {
@@ -25,22 +23,11 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// =====================================
-// RESPONSE INTERCEPTOR
-// =====================================
-
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
     const status = error.response?.status;
-    const message =
-      error.response?.data?.message || "";
-
-    // -------------------------------------
-    // INVALID / EXPIRED AUTHENTICATION
-    // -------------------------------------
+    const message = error.response?.data?.message || "";
 
     if (
       status === 401 &&
@@ -53,8 +40,6 @@ api.interceptors.response.use(
     ) {
       localStorage.removeItem("token");
 
-      // Prevent redirect loops when already
-      // on the login/authentication pages.
       const currentPath = window.location.pathname;
 
       const authPages = [

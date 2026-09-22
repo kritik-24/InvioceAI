@@ -7,7 +7,7 @@ const User = require("../models/User");
 
 const {
   sendPasswordResetEmail,
-} = require("../services/emailService");
+} = require("../services/emailservice");
 
 // =====================================
 // PASSWORD VALIDATION

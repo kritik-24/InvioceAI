@@ -277,3 +277,76 @@ Secure registration and login experience.
           │ Invoices        │       │ OpenAI API       │
           │ Payments        │       └──────────────────┘
           └─────────────────┘
+
+          🔄 Core Business Flow
+
+          User
+ │
+ ▼
+Authentication
+ │
+ ▼
+Business Profile
+ │
+ ▼
+Create Client
+ │
+ ▼
+Create Invoice
+ │
+ ├──────────────► Generate Invoice PDF
+ │
+ ▼
+Record Payment
+ │
+ ├──────────────► Partial Payment
+ │
+ └──────────────► Full Payment
+ │
+ ▼
+Invoice Status Update
+ │
+ ▼
+Dashboard Analytics
+ │
+ ▼
+AI Business Insights
+
+🎯 Project Goals
+InvoiceAI was built to demonstrate practical full-stack development skills across:
+- REST API design
+- Authentication and authorization
+- Database modeling
+- Business logic
+- Financial data handling
+- Data aggregation
+- API security
+- Third-party API integration
+- Email workflows
+- Cloud file storage
+- PDF generation
+- AI integration
+- Production deployment
+
+👨‍💻 Author
+Kritik
+B.Tech — Artificial Intelligence & Data Science
+GitHub:
+https://github.com/kritik-24
+
+📄 License
+This project is intended for portfolio and educational purposes.
+
+### Why this version is better
+
+Your original README was already functional, but this version makes the project read more like a **real SaaS engineering project**:
+
+- The **business workflow** is immediately clear.
+- Security work is visible instead of buried.
+- The architecture explains how the pieces interact.
+- Local development is reproducible.
+- Production deployment is documented.
+- The AI feature is described accurately rather than as generic "AI".
+- Recruiters can quickly scan the project without reading every feature.
+
+One thing I deliberately **didn't** add is claims like "enterprise-grade", "100% secure", performance numbers, user counts, or test coverage that we haven't actually established.
